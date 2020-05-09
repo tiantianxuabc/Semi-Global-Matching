@@ -1,6 +1,7 @@
 # Semi-Global-Matching
 Semi-Global Matching(SGM) based on C++
-
+![Left](L0.png) | ![Right](R0.png)
+--|--
 this code contain:
 
 1, hamming distance(Hamming distance instead of mutual information)
