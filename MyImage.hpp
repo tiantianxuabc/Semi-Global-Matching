@@ -1,3 +1,5 @@
+// Copyright ?Robert Spangenberg, 2014.
+// See license.txt for more details
 
 #include <string>
 #include "StereoCommon.h"

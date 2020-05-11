@@ -1,4 +1,5 @@
-// myneml@163.com
+// Copyright ?Robert Spangenberg, 2014.
+// See license.txt for more details
 
 #include "iostream"
 #include <bitset>
@@ -10,8 +11,7 @@
 #include "FastFilters.h"
 #include "StereoSGM.h"
 
-#include <dlib/gui_widgets.h>
-#include <dlib/image_transforms.h>
+
 #include <cmath>
 #include <opencv.hpp>
 
@@ -26,14 +26,14 @@
 #include "MyImage.h"
 
 #if _DEBUG
-#pragma  comment(lib, "opencv_world400d.lib")
+#pragma  comment(lib, "opencv_world430d.lib")
 
 #else
-#pragma comment(lib, "opencv_world400.lib")
+#pragma comment(lib, "opencv_world430.lib")
 
 #endif
 
-const int dispRange = 128;
+const int dispRange = 256;
 
 
 void correctEndianness(uint16* input, uint16* output, uint32 size)
@@ -138,25 +138,37 @@ cv::Mat Float2ColorJet(cv::Mat &fimg, float dmin, float dmax)
 int formatJPG()
 {
 	
-	cv::Mat imgL = cv::imread("L0.png", cv::IMREAD_GRAYSCALE);
+	cv::Mat imgL = cv::imread("D:\\L0.png", cv::IMREAD_GRAYSCALE);
 	if(imgL.empty())
 	{
 		std::cout<<"Left image does not exist!";
 		system("pause");
 		return 0;
-	}	
-	
-
+	}
 
 	
+	
+	
+// 	cv::transpose(imgL, imgL);
+// 	cv::flip(imgL, imgL, 1);
+// 	cv::flip(imgL, imgL, 1);
 
-	cv::Mat imgR = cv::imread("R0.png", cv::IMREAD_GRAYSCALE);
+
+	
+
+	cv::Mat imgR = cv::imread("D:\\R0.png", cv::IMREAD_GRAYSCALE);
 	if(imgR.empty())
 	{
 		std::cout<<"Right image does not exist!";
 		system("pause");
 		return 0;
 	}
+
+	/*cv::imwrite("E:/000000_L_1.png", imgR);*/
+
+// 	cv::transpose(imgR, imgR);
+// 	cv::flip(imgR, imgR, 1);
+// 	cv::flip(imgR, imgR, 1);
 
 	int cols_ = 0;
 	int rows_ = 0;
@@ -238,78 +250,82 @@ int formatJPG()
 			}
 		}
 	}
+
+
+	
+	/************************************************************************/
 /*                                                                      */
 /************************************************************************/
 
 	/*************************v-disparity****************************/
- 	cv::Mat vDisp(cv::Size(dispRange, imgL.rows), CV_8U);
- 	uint8 tmp = 0;
- 	int dispMax = 0;
- 	for(int i = 0; i < imgL.rows; i++)
- 	{
- 		uint8 a[dispRange] = {0};
- 		for (int j = 0; j <  cols_; j++)
- 		{
- 			if( (tmp = *(imgDisp.data + i*imgDisp.step + j*imgDisp.elemSize())) < dispRange)
- 			{
- 				if(a[tmp] < 255)
- 				{
- 					a[tmp] = ++a[tmp];
- 				}				
- 			}
- 			else
- 			{
- 				if(a[dispRange - 1] < 255)
- 				{
- 					a[dispRange - 1] = ++a[dispRange - 1];
- 				}
- 			}			
- 		}
- 
- 		for(int k = 0; k < dispRange; k++)
- 		{
- 			*(vDisp.data + i*vDisp.step + k*vDisp.elemSize()) = a[k];			
- 		}
- 	}
- 	cv::imwrite("E:\\vDisp.png", vDisp);
+// 	cv::Mat vDisp(cv::Size(dispRange, imgL.rows), CV_8U);
+// 	uint8 tmp = 0;
+// 	int dispMax = 0;
+// 	for(int i = 0; i < imgL.rows; i++)
+// 	{
+// 		uint8 a[dispRange] = {0};
+// 		for (int j = 0; j <  cols_; j++)
+// 		{
+// 			if( (tmp = *(imgDisp.data + i*imgDisp.step + j*imgDisp.elemSize())) < dispRange)
+// 			{
+// 				if(a[tmp] < 255)
+// 				{
+// 					a[tmp] = ++a[tmp];
+// 				}				
+// 			}
+// 			else
+// 			{
+// 				if(a[dispRange - 1] < 255)
+// 				{
+// 					a[dispRange - 1] = ++a[dispRange - 1];
+// 				}
+// 			}			
+// 		}
+// 
+// 		for(int k = 0; k < dispRange; k++)
+// 		{
+// 			*(vDisp.data + i*vDisp.step + k*vDisp.elemSize()) = a[k];			
+// 		}
+// 	}
+// 	cv::imwrite("E:\\vDisp.png", vDisp);
 	/**************************************************************/
 
 	/*************************u-disparity*************************/
-  	cv::Mat uDisp(cv::Size(cols_, dispRange), CV_8U);
-  	
-  	for(int i = 0; i < cols_; i++)
-  	{
-  		int a[dispRange] = {0};
-  		tmp = 0;
-  		for (int j = 0; j <  imgL.rows; j++)
-  		{
-  			if( (tmp = *(imgDisp.data + j*imgDisp.step + i*imgDisp.elemSize())) < dispRange)
-  			{
-  				if(a[tmp] < 255)
-  				{
-  					a[tmp] = ++a[tmp];
-  				}				
-  			}
-  			else
-  			{
-  				if(a[dispRange - 1] < 255)
-  				{
-  					a[dispRange - 1] = ++a[dispRange - 1];
-  				}				
-  			}
-  		}
-  		for(int k = 0; k < dispRange; k++)
-  		{
-  			*(uDisp.data + k*uDisp.step + i*uDisp.elemSize()) = a[k];			
-  		}		
-  	}
- 	cv::imwrite("E:\\uDisp.png",uDisp);
+//  	cv::Mat uDisp(cv::Size(cols_, dispRange), CV_8U);
+//  	
+//  	for(int i = 0; i < cols_; i++)
+//  	{
+//  		int a[dispRange] = {0};
+//  		tmp = 0;
+//  		for (int j = 0; j <  imgL.rows; j++)
+//  		{
+//  			if( (tmp = *(imgDisp.data + j*imgDisp.step + i*imgDisp.elemSize())) < dispRange)
+//  			{
+//  				if(a[tmp] < 255)
+//  				{
+//  					a[tmp] = ++a[tmp];
+//  				}				
+//  			}
+//  			else
+//  			{
+//  				if(a[dispRange - 1] < 255)
+//  				{
+//  					a[dispRange - 1] = ++a[dispRange - 1];
+//  				}				
+//  			}
+//  		}
+//  		for(int k = 0; k < dispRange; k++)
+//  		{
+//  			*(uDisp.data + k*uDisp.step + i*uDisp.elemSize()) = a[k];			
+//  		}		
+//  	}
+ 	//cv::imwrite("E:\\uDisp.png",uDisp);
 	/**************************************************************/
 	
 
 	
 	
-
+	//cv::imwrite("E:\\view_3.png",imgDisp);
 	cv::namedWindow("LeftImg");
 	cv::imshow("LeftImg",imgL);
 	
@@ -327,6 +343,9 @@ int formatJPG()
 	cv::namedWindow("ColorDispImg");
 	cv::imshow("ColorDispImg", Float2ColorJet(imgFloat, 0, dispRange));
 	
+	cv::imwrite("D:/Disp.jpg", imgDisp);
+	cv::imwrite("D:/ColorDispImg.jpg", Float2ColorJet(imgFloat, 0, dispRange));
+
 	while(1)
 	{
 		cv::setMouseCallback("DispImg", onMouse, reinterpret_cast<void*>(&imgDisp));
@@ -342,8 +361,85 @@ int formatJPG()
 	return 0;
 }
 
+int formatPGM()
+{
+	char *im1name  = "E:\\PGMImg\\CarTruckaloe_left\\000015_0.pgm";
+	char *im2name  = "E:\\PGMImg\\CarTruckaloe_left\\000015_1.pgm";
+	char *dispname = "E:\\000015_0.jpg";
 
+	fillPopCount16LUT();
+	
+	MyImage<uint16> myImg1, myImg2;
+	readPGM(myImg1, im1name);
+	readPGM(myImg2, im2name);
+	 
+	std::cout << "image 1 " << myImg1.getWidth() << "x" << myImg1.getHeight() << std::endl;
+	std::cout << "image 2 " << myImg2.getWidth() << "x" << myImg2.getHeight() << std::endl;
+
+
+	if (myImg1.getWidth() % 16 != 0) 
+	{
+		std::cout << "Image width must be a multiple of 16" << std::endl;
+		return 0;
+	}
+
+	
+	//分别为leftImg 和 rightImg分配 存储空间（width*height*sizeof(uint16)）
+	uint16* leftImg = (uint16*)_mm_malloc(myImg1.getWidth()*myImg1.getHeight()*sizeof(uint16), 16);
+	uint16* rightImg = (uint16*)_mm_malloc(myImg2.getWidth()*myImg2.getHeight()*sizeof(uint16), 16);
+
+	//纠正字节顺序
+	correctEndianness((uint16*)myImg1.getData(), leftImg, myImg1.getWidth()*myImg1.getHeight());
+	correctEndianness((uint16*)myImg2.getData(), rightImg, myImg1.getWidth()*myImg1.getHeight());
+
+	clock_t start = clock();
+	//左右图像的视差图分配存储空间（width*height*sizeof(float32)）
+	float32* dispImg = (float32*)_mm_malloc(myImg1.getWidth()*myImg1.getHeight()*sizeof(float32), 16);
+	float32* dispImgRight = (float32*)_mm_malloc(myImg1.getWidth()*myImg1.getHeight()*sizeof(float32), 16);
+	
+	const int dispRange = 128;	
+	const int numPaths = 8;		
+	processCensus5x5SGM(leftImg, rightImg, dispImg, dispImgRight, myImg1.getWidth(), myImg1.getHeight(), numPaths, dispRange);
+
+	
+
+	cv::Mat imgDisp(cv::Size(myImg1.getWidth(),  myImg1.getHeight()), CV_8U);
+
+	for(unsigned int i = 0; i <  myImg1.getHeight(); i++)
+	{
+		for(unsigned int j = 0; j < myImg1.getWidth(); j++)
+		{
+			if(dispImg[i * myImg1.getWidth() + j] > 0)
+			{
+				*(imgDisp.data + i*imgDisp.step + j * imgDisp.elemSize()) =  dispImg[i * myImg1.getWidth() + j];
+			}
+			else
+			{
+				*(imgDisp.data + i*imgDisp.step + j * imgDisp.elemSize()) = 0;
+			}
+		}
+	}
+	clock_t endtime = clock();
+	std::cout<<std::endl;
+	std::cout<<"time is "<<(double)(endtime - start)/CLOCKS_PER_SEC<<std::endl;
+
+	
+
+	 cv::namedWindow("DispResult");
+	 cv::imshow("DispResult",imgDisp);
+	 cv::imwrite(dispname,imgDisp);
+	 cv::setMouseCallback("DispResult", onMouse, reinterpret_cast<void*>(&imgDisp));
+	 cv::waitKey(0);
+	
+	_mm_free(leftImg);
+	_mm_free(rightImg);
+	_mm_free(dispImg);
+	_mm_free(dispImgRight);	
+
+	return 0;
+}
 int main()
 {	
-	return formatJPG();	
+	return formatJPG();
+	/*return formatPGM();*/
 }

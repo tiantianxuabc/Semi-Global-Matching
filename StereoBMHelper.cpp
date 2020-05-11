@@ -1,10 +1,13 @@
+// Copyright ?Robert Spangenberg, 2014.
+// See license.txt for more details
+
 #include "StereoCommon.h"
 #include "StereoBMHelper.h"
 #include<fstream>
 #include <assert.h>
 #include <cmath>
 #include <limits>
-#include <smmintrin.h>
+#include <smmintrin.h> // intrinsics
 #include <emmintrin.h>
 #include <nmmintrin.h>
 #include <string.h>
